@@ -7,3 +7,4 @@
 - Clone this repo
 - Open up the project in IntelliJ/Eclipse
 - Run the `psvm` method on this [class](./src/main/java/com/pulsepoint/games/minesweeper/runner/MinesweeperAppRunner.java)
+- Launch a browser, and go to this link - `http://localhost:9000/`
