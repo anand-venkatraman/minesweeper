@@ -5,11 +5,9 @@ import com.pulsepoint.games.minesweeper.dto.*;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomUtils.nextInt;
 
@@ -20,22 +18,22 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
  */
 public class MineSweeperGameServiceImpl implements MineSweeperGameService {
     
-    private final Map<Level, ComplexityConfig> levelConfig;
+    private final Map<Level, GameConfig> levelConfig;
     private Map<String, Game> games = newHashMap();
     private Map<String, Set<Position>> gameMines = newHashMap();
 
     public MineSweeperGameServiceImpl() {
         levelConfig = ImmutableMap.of(
-                Level.EASY, new ComplexityConfig(8, 8, 10),
-                Level.MEDIUM, new ComplexityConfig(12, 12, 20),
-                Level.HARD, new ComplexityConfig(16, 16, 30)
+                Level.EASY, new GameConfig(8, 8, 10),
+                Level.MEDIUM, new GameConfig(12, 12, 20),
+                Level.HARD, new GameConfig(16, 16, 30)
         );
     }
 
     @Override
     public Game createGame(Level level) {
         String gameId = randomAlphanumeric(10);
-        ComplexityConfig complexityConfig = levelConfig.get(level);
+        GameConfig complexityConfig = levelConfig.get(level);
         /*
          * Setup the game with boxes based on level of complexity.
          */
@@ -68,7 +66,7 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
                 return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(x, y))), GameStatus.LOST);
             } else {
                 game.getBoard().getBox(x, y).setStatus(BoxStatus.OPENED);
-                Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = openBox(x, y, game.getBoard().getBoxes(), gameMines.get(gameId), game.getComplexity());
+                Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = openBox(x, y, game.getBoard().getBoxes(), gameMines.get(gameId), game.getConfig());
                 boolean gameDone = isGameDone(game, mines);
                 return new OpenBoxOperationStatus(boxesAffected, gameDone ? GameStatus.WON : GameStatus.IN_PLAY);
             }
@@ -92,7 +90,7 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
         return !markedMines.removeAll(mines) || markedMines.size() <= 0;
     }
 
-    private Set<OpenBoxOperationStatus.BoxPosition> openBox(int x, int y, Box[][] boxes, Set<Position> mines, ComplexityConfig complexityConfig) {
+    private Set<OpenBoxOperationStatus.BoxPosition> openBox(int x, int y, Box[][] boxes, Set<Position> mines, GameConfig complexityConfig) {
         int adjacentMineCount = 0;
         Box box = boxes[x][y];
         Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(x, y)));
@@ -122,7 +120,7 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
         return boxesAffected;
     }
 
-    private void addToSet(Set<Position> adjacentBoxes, int x, int y, ComplexityConfig complexityConfig) {
+    private void addToSet(Set<Position> adjacentBoxes, int x, int y, GameConfig complexityConfig) {
         if (x >= 0 && x < complexityConfig.getRows() && y >= 0 && y < complexityConfig.getColumns()) {
             adjacentBoxes.add(new Position(x, y));
         }

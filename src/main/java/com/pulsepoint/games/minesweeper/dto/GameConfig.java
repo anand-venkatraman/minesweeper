@@ -9,13 +9,13 @@ import java.util.Objects;
  * 
  * @author avenkatraman
  */
-public class ComplexityConfig {
+public class GameConfig {
     
     private int columns;
     private int rows;
     private int mineCount;
 
-    public ComplexityConfig(int columns, int rows, int mineCount) {
+    public GameConfig(int columns, int rows, int mineCount) {
         this.columns = columns;
         this.rows = rows;
         this.mineCount = mineCount;
@@ -37,7 +37,7 @@ public class ComplexityConfig {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ComplexityConfig that = (ComplexityConfig) o;
+        GameConfig that = (GameConfig) o;
         return columns == that.columns &&
                 rows == that.rows &&
                 mineCount == that.mineCount;

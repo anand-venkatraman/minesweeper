@@ -8,7 +8,9 @@ import java.util.Set;
 /**
  * Represents the status of the operation to open a {@link Box}.
  * Multiple boxes can be affected, and the game could either be won/lost
- * depending on whether it was the last box or the mine box.
+ * depending on whether it was the last box or the mine box. If a empty box
+ * was opened, all the adjacent boxes are opened up until it reaches boxes having
+ * mines as neighbors. 
  *
  * @author avenkatraman
  */

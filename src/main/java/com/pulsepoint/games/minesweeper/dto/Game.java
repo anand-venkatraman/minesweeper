@@ -16,14 +16,14 @@ public class Game {
     private GameStatus status;
     private long startTime;
     private long endTime;
-    private ComplexityConfig complexity;
+    private GameConfig config;
 
-    public Game(String id, Board board, ComplexityConfig complexity) {
+    public Game(String id, Board board, GameConfig config) {
         this.id = id;
         this.startTime = System.currentTimeMillis();
         this.status = GameStatus.IN_PLAY;
         this.board = board;
-        this.complexity = complexity;
+        this.config = config;
     }
 
     public String getId() {
@@ -54,8 +54,8 @@ public class Game {
         return this;
     }
 
-    public ComplexityConfig getComplexity() {
-        return complexity;
+    public GameConfig getConfig() {
+        return config;
     }
 
     @Override
@@ -68,12 +68,12 @@ public class Game {
                 Objects.equals(id, game.id) &&
                 Objects.equals(board, game.board) &&
                 status == game.status &&
-                Objects.equals(complexity, game.complexity);
+                Objects.equals(config, game.config);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, board, status, startTime, endTime, complexity);
+        return Objects.hash(id, board, status, startTime, endTime, config);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class Game {
                 .add("status", status)
                 .add("startTime", startTime)
                 .add("endTime", endTime)
-                .add("complexity", complexity)
+                .add("config", config)
                 .toString();
     }
 }

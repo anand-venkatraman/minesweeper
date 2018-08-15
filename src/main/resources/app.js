@@ -57,7 +57,7 @@ minesweeperApp.controller('MinesweeperCtrl', function ($scope, $http, $uibModal,
         $http.get('/service/game/new?level=' + $scope.level)
             .then(response => {
                 $scope.game = response.data;
-                $scope.minesLeftToMark = $scope.game.complexity.mineCount;
+                $scope.minesLeftToMark = $scope.game.config.mineCount;
                 var board = {};
                 $scope.board = $scope.game.board.boxes;
                 $scope.timeTaken = 0;
