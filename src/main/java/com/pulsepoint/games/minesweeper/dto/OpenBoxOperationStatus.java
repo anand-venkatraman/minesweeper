@@ -14,15 +14,15 @@ import java.util.Set;
  */
 public class OpenBoxOperationStatus {
     
-    private Set<Box> boxesAffected;
+    private Set<BoxPosition> boxesAffected;
     private GameStatus status;
 
-    public OpenBoxOperationStatus(Set<Box> boxesAffected, GameStatus status) {
+    public OpenBoxOperationStatus(Set<BoxPosition> boxesAffected, GameStatus status) {
         this.boxesAffected = boxesAffected;
         this.status = status;
     }
 
-    public Set<Box> getBoxesAffected() {
+    public Set<BoxPosition> getBoxesAffected() {
         return boxesAffected;
     }
 

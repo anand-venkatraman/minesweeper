@@ -10,18 +10,8 @@ import java.util.StringJoiner;
  */
 public class Box {
     
-    private Position position;
     private BoxStatus status;
     private int adjacentMineCount;
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public Box setPosition(Position position) {
-        this.position = position;
-        return this;
-    }
 
     public BoxStatus getStatus() {
         return status;
@@ -47,19 +37,17 @@ public class Box {
         if (o == null || getClass() != o.getClass()) return false;
         Box box = (Box) o;
         return adjacentMineCount == box.adjacentMineCount &&
-                Objects.equals(position, box.position) &&
                 status == box.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(position, status, adjacentMineCount);
+        return Objects.hash(status, adjacentMineCount);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Box.class.getSimpleName() + "[", "]")
-                .add("position=" + position)
                 .add("status=" + status)
                 .add("adjacentMineCount=" + adjacentMineCount)
                 .toString();

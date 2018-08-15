@@ -35,10 +35,10 @@
                         <fieldset ng-disabled="game.status != 'IN_PLAY'">
                         <table id="tblBoard" ng-readonly="">
                             <tbody>
-                                <tr ng-repeat="row in board">
-                                    <td ng-repeat="box in row" class="td-box">
+                                <tr ng-repeat="row in board" ng-init="rowId=$index">
+                                    <td ng-repeat="box in row" class="td-box" ng-init="colId=$index">
                                         <button class="btn-close btn-{{box.status}}" ng-show="box.status != 'OPENED'" 
-                                                ng-click="open(box)" ng-right-click="markMine(box)"></button>
+                                                ng-click="open(box, rowId, colId)" ng-right-click="markMine(box, rowId, colId)"></button>
                                         <div class="div-open" ng-show="box.status == 'OPENED'">
                                             <span class="spn-open spn-open-{{box.adjacentMineCount}}" >{{box.adjacentMineCount > 0 ? box.adjacentMineCount : ''}}</span>
                                             

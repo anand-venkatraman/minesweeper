@@ -1,11 +1,7 @@
 package com.pulsepoint.games.minesweeper.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,14 +11,17 @@ import java.util.Objects;
  */
 public class Board {
     
-    @JsonIgnore
-    private Map<Position, Box> boxes;
+    private Box[][] boxes;
     private int totalMines;
     private int minesMarked;
     private int boxesOpened;
 
-    public Map<Position, Box> getBoxes() {
+    public Box[][] getBoxes() {
         return boxes;
+    }
+    
+    public Box getBox(int x, int y) {
+        return boxes[x][y];
     }
 
     public int getTotalMines() {
@@ -37,7 +36,7 @@ public class Board {
         return boxesOpened;
     }
 
-    public Board setBoxes(Map<Position, Box> boxes) {
+    public Board setBoxes(Box[][] boxes) {
         this.boxes = boxes;
         return this;
     }
@@ -57,11 +56,6 @@ public class Board {
         return this;
     }
     
-    @JsonProperty("boxes")
-    public Collection<Box> getBoxValues() {
-        return boxes.values();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
