@@ -33,14 +33,28 @@ minesweeperApp.controller('MinesweeperCtrl', function ($scope, $http, $uibModal,
             });
     };
 
-    newGame($scope.level);
+    newGame();
 
     $scope.newGame = function () {
-        newGame($scope.level);
+        newGame();
+    };
+    
+    $scope.changeLevel = function() {
+        $uibModal.open({
+            animation: true,
+            templateUrl: 'level.html',
+            controller: 'ChangeLevelCtrl',
+            size: 'sm'
+        }).result.then((level) => {
+            if (level){
+                $scope.level = level.toUpperCase();
+            }
+            newGame();
+        });
     };
 
-    function newGame(level) {
-        $http.get('/service/game/new?level=' + level)
+    function newGame() {
+        $http.get('/service/game/new?level=' + $scope.level)
             .then(response => {
                 $scope.game = response.data;
                 $scope.minesLeftToMark = $scope.game.complexity.mineCount;
@@ -94,15 +108,23 @@ minesweeperApp.directive('ngRightClick', function ($parse) {
  */
 minesweeperApp.filter('numberFixedLen', function () {
     return function (n, len) {
-        var num = parseInt(n, 10);
-        len = parseInt(len, 10);
-        if (isNaN(num) || isNaN(len)) {
-            return n;
+        var min = Math.floor(n / 60) 
+        var sec = n %60;
+        if (sec < 10) {
+            sec = '0' + sec;
         }
-        num = '' + num;
-        while (num.length < len) {
-            num = '0' + num;
-        }
-        return num;
+        return min + ':' + sec;
     };
+});
+
+minesweeperApp.controller('ChangeLevelCtrl', function ($scope, $modalInstance) {
+    $scope.level = '';
+    
+    $scope.close = function () {
+        $modalInstance.dismiss('close');
+    };
+    
+    $scope.ok = function() {
+        $modalInstance.close($scope.level);
+    }
 });

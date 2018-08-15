@@ -2,6 +2,7 @@ package com.pulsepoint.games.minesweeper.web;
 
 import com.pulsepoint.games.minesweeper.dto.Game;
 import com.pulsepoint.games.minesweeper.service.MineSweeperGameService;
+import com.pulsepoint.games.minesweeper.service.MineSweeperGameServiceImpl;
 import com.pulsepoint.games.minesweeper.dto.Level;
 import com.pulsepoint.games.minesweeper.dto.OpenBoxOperationStatus;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 @Path("/")
 public class MinesweeperWebService extends Application {
     
-    private MineSweeperGameService service = new MineSweeperGameService();
+    private MineSweeperGameService service = new MineSweeperGameServiceImpl();
     
     @GET
     @Path("/game/new")

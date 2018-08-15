@@ -25,13 +25,16 @@
                         <button ng-click="newGame()" id="newGame" title="New Game" class="newgame-{{game.status}}"/>
                     </td>
                     <td>
+                        <button ng-click="changeLevel()" id="changeLevel" title="Change Level" class="btn-change-level"/>
+                    </td>
+                    <td>
                         <div class="div-value" title="Time elapsed">
                             {{timeTaken | numberFixedLen:3}}
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="4">
                         <fieldset ng-disabled="game.status != 'IN_PLAY'">
                         <table id="tblBoard" ng-readonly="">
                             <tbody>
@@ -53,5 +56,34 @@
             </tbody>
         </table>
     </div>
+    <script type="text/ng-template" id="level.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Change Level</h3>
+        </div>
+        <div class="modal-body">
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <input type="radio" name="level" id="easy" value="EASY" ng-model="level">
+                </div>
+                <label class="control-label col-sm-2" for="easy">Easy</label>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-1">
+                <input type="radio" name="level" id="medium" value="MEDIUM" ng-model="level">
+                </div>
+                <label class="control-label col-sm-2" for="medium">Medium</label>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <input type="radio" name="level" id="hard" value="HARD" ng-model="level">
+                </div>
+                <label class="control-label col-sm-2" for="hard">Hard</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" type="button" ng-click="ok()">Ok</button>
+            <button class="btn btn-warning" type="button" ng-click="close()">Close</button>
+        </div>
+    </script>
 </body>
 </html>
