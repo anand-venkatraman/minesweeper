@@ -24,9 +24,9 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
 
     public MineSweeperGameServiceImpl() {
         levelConfig = ImmutableMap.of(
-                Level.EASY, new GameConfig(8, 8, 10),
-                Level.MEDIUM, new GameConfig(12, 12, 20),
-                Level.HARD, new GameConfig(16, 16, 30)
+                Level.EASY, new GameConfig(8, 8, 10),       //15% mines
+                Level.MEDIUM, new GameConfig(12, 12, 30),   //20% mines
+                Level.HARD, new GameConfig(16, 16, 64)      //25% mines
         );
     }
 
