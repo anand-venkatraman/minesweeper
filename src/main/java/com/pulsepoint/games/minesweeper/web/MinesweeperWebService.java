@@ -38,14 +38,14 @@ public class MinesweeperWebService extends Application {
     
     @GET
     @Path("/game/{id}/box")
-    public OpenBoxOperationStatus openBox(@PathParam("id") String gameId, @QueryParam("x") int x, @QueryParam("y") int y) {
-        return service.openBox(gameId, x, y);
+    public OpenBoxOperationStatus openBox(@PathParam("id") String gameId, @QueryParam("row") int row, @QueryParam("col") int col) {
+        return service.openBox(gameId, row, col);
     }
     
     @GET
     @Path("/game/{id}/box/mine")
-    public OpenBoxOperationStatus markMine(@PathParam("id") String gameId, @QueryParam("x") int x, @QueryParam("y") int y) {
-        return service.markMine(gameId, x, y);
+    public OpenBoxOperationStatus markMine(@PathParam("id") String gameId, @QueryParam("row") int row, @QueryParam("col") int col) {
+        return service.markMine(gameId, row, col);
     }
 
     @Override

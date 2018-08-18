@@ -15,15 +15,7 @@ public class Board {
     private int totalMines;
     private int minesMarked;
     private int boxesOpened;
-
-    public Box[][] getBoxes() {
-        return boxes;
-    }
     
-    public Box getBox(int x, int y) {
-        return boxes[x][y];
-    }
-
     public int getTotalMines() {
         return totalMines;
     }
@@ -34,6 +26,18 @@ public class Board {
 
     public int getBoxesOpened() {
         return boxesOpened;
+    }
+    
+    public int getRows() {
+        return boxes.length;
+    }
+    
+    public int getColumns() {
+        return boxes[0].length;
+    }
+    
+    public Box getBox(int row, int col) {
+        return boxes[row][col];
     }
 
     public Board setBoxes(Box[][] boxes) {

@@ -26,12 +26,12 @@ public interface MineSweeperGameService {
      * mines. Opening a box with a mine will result in the Game getting over.
      * 
      * @param gameId Identifier for the game.
-     * @param x x coordinate for the Box with reference to the left of Board
-     * @param y y coordinate for the Box with reference to the top of Board
+     * @param row row id on 0 based index. 0 is first row 
+     * @param col column id on 0 based index. 0 is first column
      * @return A status object holding the result of the operation. This will hold
      * the Boxes affected, and if the overall Game status has changed.
      */
-    OpenBoxOperationStatus openBox(String gameId, int x, int y);
+    OpenBoxOperationStatus openBox(String gameId, int row, int col);
 
     /**
      * Gets the game given the identifier.
@@ -50,10 +50,10 @@ public interface MineSweeperGameService {
      * as Won.
      * 
      * @param gameId Identifier of the Game
-     * @param x coordinate for the Box with reference to the left of Board
-     * @param y y coordinate for the Box with reference to the top of Board 
+     * @param row row id on 0 based index. 0 is first row 
+     * @param col column id on 0 based index. 0 is first column 
      * @return A status object holding the result of the operation. This will hold
      * the Box affected, and if the overall Game status has changed.
      */
-    OpenBoxOperationStatus markMine(String gameId, int x, int y);
+    OpenBoxOperationStatus markMine(String gameId, int row, int col);
 }

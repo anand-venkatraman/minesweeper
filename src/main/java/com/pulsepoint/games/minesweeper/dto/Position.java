@@ -11,20 +11,20 @@ import java.util.Objects;
  */
 public class Position {
     
-    private int x;
-    private int y;
+    private int row;
+    private int col;
 
     public Position(int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.row = x;
+        this.col = y;
     }
 
-    public int getX() {
-        return x;
+    public int getRow() {
+        return row;
     }
 
-    public int getY() {
-        return y;
+    public int getCol() {
+        return col;
     }
 
     @Override
@@ -32,20 +32,20 @@ public class Position {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Position position = (Position) o;
-        return x == position.x &&
-                y == position.y;
+        return row == position.row &&
+                col == position.col;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(row, col);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("x", x)
-                .add("y", y)
+                .add("row", row)
+                .add("col", col)
                 .toString();
     }
 }

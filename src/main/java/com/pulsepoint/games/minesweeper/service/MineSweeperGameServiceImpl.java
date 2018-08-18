@@ -18,55 +18,54 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
  */
 public class MineSweeperGameServiceImpl implements MineSweeperGameService {
     
-    private final Map<Level, GameConfig> levelConfig;
+    private final Map<Level, Double> mineDensity;
+    private final Map<Level, Integer> boardDimension;
     private Map<String, Game> games = newHashMap();
     private Map<String, Set<Position>> gameMines = newHashMap();
 
     public MineSweeperGameServiceImpl() {
-        levelConfig = ImmutableMap.of(
-                Level.EASY, new GameConfig(8, 8, 10),       //15% mines
-                Level.MEDIUM, new GameConfig(12, 12, 30),   //20% mines
-                Level.HARD, new GameConfig(16, 16, 64)      //25% mines
-        );
+        mineDensity = ImmutableMap.of(Level.EASY, 0.12, Level.MEDIUM, 0.15, Level.HARD, 0.2);
+        boardDimension = ImmutableMap.of(Level.EASY, 8, Level.MEDIUM, 12, Level.HARD, 16);
     }
 
     @Override
     public Game createGame(Level level) {
         String gameId = randomAlphanumeric(10);
-        GameConfig complexityConfig = levelConfig.get(level);
+        Integer dimension = boardDimension.get(level);
+        int mineCount = (int) Math.ceil(mineDensity.get(level) * dimension * dimension);
         /*
          * Setup the game with boxes based on level of complexity.
          */
-        Box[][] boxes = new Box[complexityConfig.getRows()][complexityConfig.getColumns()];
-        for(int i=0; i < complexityConfig.getRows(); i ++) {
-            for(int j=0; j < complexityConfig.getColumns(); j ++) {
+        Box[][] boxes = new Box[dimension][dimension];
+        for(int i=0; i < dimension; i ++) {
+            for(int j=0; j < dimension; j ++) {
                 boxes[i][j] = new Box().setStatus(BoxStatus.CLOSED); 
             }
         }
         Board board = new Board().setBoxes(boxes).setBoxesOpened(0).setMinesMarked(0);
         Set<Position> minePositions = newHashSet();
-        while(minePositions.size() < complexityConfig.getMineCount()) {
-            minePositions.add(new Position(nextInt(0, complexityConfig.getRows()), nextInt(0, complexityConfig.getColumns())));   
+        while(minePositions.size() < mineCount) {
+            minePositions.add(new Position(nextInt(0, dimension), nextInt(0, dimension)));   
         }
-        Game game = new Game(gameId, board, complexityConfig);
+        Game game = new Game(gameId, board, mineCount);
         gameMines.put(gameId, minePositions);
         games.put(gameId, game);
         return game;
     }
     
     @Override
-    public OpenBoxOperationStatus openBox(String gameId, int x, int y) {
+    public OpenBoxOperationStatus openBox(String gameId, int row, int col) {
         Game game = games.get(gameId);
         Set<Position> mines = gameMines.get(gameId);
-        Box box = game.getBoard().getBox(x, y);
+        Box box = game.getBoard().getBox(row, col);
         if (game.getStatus() == GameStatus.IN_PLAY && box.getStatus() != BoxStatus.OPENED) {
-            if (mines.contains(new Position(x, y))) {
+            if (mines.contains(new Position(row, col))) {
                 box.setStatus(BoxStatus.OPENED_MINE);
                 game.setStatus(GameStatus.LOST);
-                return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(x, y))), GameStatus.LOST);
+                return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(row, col))), GameStatus.LOST);
             } else {
-                game.getBoard().getBox(x, y).setStatus(BoxStatus.OPENED);
-                Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = openBox(x, y, game.getBoard().getBoxes(), gameMines.get(gameId), game.getConfig());
+                game.getBoard().getBox(row, col).setStatus(BoxStatus.OPENED);
+                Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = openBox(row, col, game.getBoard(), gameMines.get(gameId));
                 boolean gameDone = isGameDone(game, mines);
                 return new OpenBoxOperationStatus(boxesAffected, gameDone ? GameStatus.WON : GameStatus.IN_PLAY);
             }
@@ -76,11 +75,10 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
 
     private boolean isGameDone(Game game, Set<Position> mines) {
         Set<Position> markedMines = newHashSet();
-        Box[][] boxes = game.getBoard().getBoxes();
-        for (int i = 0; i < boxes.length; i++) {
-            for (int j = 0; j < boxes[0].length; j++) {
-                if (boxes[i][j].getStatus() == BoxStatus.MARKED_MINE) {
-                    markedMines.add(new Position(i, j));
+        for (int rowId = 0; rowId < game.getBoard().getRows(); rowId++) {
+            for (int colId = 0; colId < game.getBoard().getColumns(); colId++) {
+                if (game.getBoard().getBox(rowId, colId).getStatus() == BoxStatus.MARKED_MINE) {
+                    markedMines.add(new Position(rowId, colId));
                 }
             }
         }
@@ -90,19 +88,19 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
         return !markedMines.removeAll(mines) || markedMines.size() <= 0;
     }
 
-    private Set<OpenBoxOperationStatus.BoxPosition> openBox(int x, int y, Box[][] boxes, Set<Position> mines, GameConfig complexityConfig) {
+    private Set<OpenBoxOperationStatus.BoxPosition> openBox(int row, int col, Board board, Set<Position> mines) {
         int adjacentMineCount = 0;
-        Box box = boxes[x][y];
-        Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(x, y)));
+        Box box = board.getBox(row, col);
+        Set<OpenBoxOperationStatus.BoxPosition> boxesAffected = newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(row, col)));
         Set<Position> adjacentPositions = newHashSet();
-        addToSet(adjacentPositions, x + 1, y + 1, complexityConfig);
-        addToSet(adjacentPositions, x + 1, y, complexityConfig);
-        addToSet(adjacentPositions, x, y + 1, complexityConfig);
-        addToSet(adjacentPositions, x - 1, y -1, complexityConfig);
-        addToSet(adjacentPositions, x - 1, y, complexityConfig);
-        addToSet(adjacentPositions, x, y -1, complexityConfig);
-        addToSet(adjacentPositions, x - 1, y + 1, complexityConfig);
-        addToSet(adjacentPositions, x + 1, y - 1, complexityConfig);
+        addToSet(adjacentPositions, row + 1, col + 1, board);
+        addToSet(adjacentPositions, row + 1, col, board);
+        addToSet(adjacentPositions, row, col + 1, board);
+        addToSet(adjacentPositions, row - 1, col -1, board);
+        addToSet(adjacentPositions, row - 1, col, board);
+        addToSet(adjacentPositions, row, col -1, board);
+        addToSet(adjacentPositions, row - 1, col + 1, board);
+        addToSet(adjacentPositions, row + 1, col - 1, board);
         for(Position adjacent : adjacentPositions) {
             if (mines.contains(adjacent)) {
                 adjacentMineCount ++;
@@ -112,17 +110,17 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
         box.setAdjacentMineCount(adjacentMineCount);
         if (adjacentMineCount == 0) {
             for(Position adjacent : adjacentPositions) {
-                if (boxes[adjacent.getX()][adjacent.getY()].getStatus() == BoxStatus.CLOSED && ! mines.contains(adjacent)) {
-                    boxesAffected.addAll(openBox(adjacent.getX(), adjacent.getY(), boxes, mines, complexityConfig));
+                if (board.getBox(adjacent.getRow(), adjacent.getCol()).getStatus() == BoxStatus.CLOSED && ! mines.contains(adjacent)) {
+                    boxesAffected.addAll(openBox(adjacent.getRow(), adjacent.getCol(), board, mines));
                 }
             }
         }
         return boxesAffected;
     }
 
-    private void addToSet(Set<Position> adjacentBoxes, int x, int y, GameConfig complexityConfig) {
-        if (x >= 0 && x < complexityConfig.getRows() && y >= 0 && y < complexityConfig.getColumns()) {
-            adjacentBoxes.add(new Position(x, y));
+    private void addToSet(Set<Position> adjacentBoxes, int row, int col, Board board) {
+        if (row >= 0 && row < board.getRows() && col >= 0 && col < board.getColumns()) {
+            adjacentBoxes.add(new Position(row, col));
         }
     }
 
@@ -132,24 +130,24 @@ public class MineSweeperGameServiceImpl implements MineSweeperGameService {
     }
 
     @Override
-    public OpenBoxOperationStatus markMine(String gameId, int x, int y) {
+    public OpenBoxOperationStatus markMine(String gameId, int row, int col) {
         Game game = games.get(gameId);
         if(game.getStatus() == GameStatus.IN_PLAY) {
-            Box box = game.getBoard().getBox(x, y);
+            Box box = game.getBoard().getBox(row, col);
             if (box.getStatus() == BoxStatus.CLOSED) {
                 box.setStatus(BoxStatus.MARKED_MINE);
                 boolean gameDone = isGameDone(game, gameMines.get(gameId));
-                return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(x, y))), gameDone ? GameStatus.WON : GameStatus.IN_PLAY);
+                return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(row, col))), gameDone ? GameStatus.WON : GameStatus.IN_PLAY);
             }
             if (box.getStatus() == BoxStatus.MARKED_MINE) {
                 box.setStatus(BoxStatus.CLOSED);
-                return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(x, y))), GameStatus.IN_PLAY);
+                return new OpenBoxOperationStatus(newHashSet(new OpenBoxOperationStatus.BoxPosition(box, new Position(row, col))), GameStatus.IN_PLAY);
             }
         }
         return null;
     }
     
-    public void addGame(Game game, Set<Position> mineLocations) {
+    void addGame(Game game, Set<Position> mineLocations) {
         this.gameMines.put(game.getId(), mineLocations);
         this.games.put(game.getId(), game);
     }

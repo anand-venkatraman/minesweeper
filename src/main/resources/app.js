@@ -11,7 +11,7 @@ minesweeperApp.controller('MinesweeperCtrl', function ($scope, $http, $uibModal,
     var timer = null;
 
     $scope.open = function (box, rowId, colId) {
-        $http.get('/service/game/' + $scope.game.id + '/box?x=' + rowId + '&y=' + colId)
+        $http.get('/service/game/' + $scope.game.id + '/box?row=' + rowId + '&col=' + colId)
             .then(response => {
                 updateBoxesAffected(response.data.boxesAffected);
                 updateGameStatus(response.data.status);
@@ -19,7 +19,7 @@ minesweeperApp.controller('MinesweeperCtrl', function ($scope, $http, $uibModal,
     };
 
     $scope.markMine = function (box, rowId, colId) {
-        $http.get('/service/game/' + $scope.game.id + '/box/mine?x=' + rowId + '&y=' + colId)
+        $http.get('/service/game/' + $scope.game.id + '/box/mine?row=' + rowId + '&col=' + colId)
             .then(response => {
                 updateBoxesAffected(response.data.boxesAffected);
                 updateGameStatus(response.data.status);
@@ -57,9 +57,19 @@ minesweeperApp.controller('MinesweeperCtrl', function ($scope, $http, $uibModal,
         $http.get('/service/game/new?level=' + $scope.level)
             .then(response => {
                 $scope.game = response.data;
-                $scope.minesLeftToMark = $scope.game.config.mineCount;
-                var board = {};
-                $scope.board = $scope.game.board.boxes;
+                $scope.minesLeftToMark = $scope.game.mineCount;
+                var boxes = [];
+                for(var i=0; i < $scope.game.board.rows; i ++) {
+                    var arr = [];
+                    for(var j=0; j < $scope.game.board.columns; j ++) {
+                        arr.push({
+                            status: 'CLOSED',
+                            adjacentMineCount: 0
+                        });
+                    }
+                    boxes.push(arr);
+                }
+                $scope.board = boxes;
                 $scope.timeTaken = 0;
                 $interval.cancel(timer);
                 timer = $interval(() => {
@@ -71,7 +81,7 @@ minesweeperApp.controller('MinesweeperCtrl', function ($scope, $http, $uibModal,
     function updateBoxesAffected(boxesAffected) {
         if (boxesAffected) {
             boxesAffected.forEach(boxPos => {
-                $scope.board[boxPos.position.x][boxPos.position.y] = boxPos.box;
+                $scope.board[boxPos.position.row][boxPos.position.col] = boxPos.box;
             });
         }
     }

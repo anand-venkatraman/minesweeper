@@ -16,14 +16,14 @@ public class Game {
     private GameStatus status;
     private long startTime;
     private long endTime;
-    private GameConfig config;
+    private int mineCount;
 
-    public Game(String id, Board board, GameConfig config) {
+    public Game(String id, Board board, int mineCount) {
         this.id = id;
         this.startTime = System.currentTimeMillis();
         this.status = GameStatus.IN_PLAY;
         this.board = board;
-        this.config = config;
+        this.mineCount = mineCount;
     }
 
     public String getId() {
@@ -54,8 +54,8 @@ public class Game {
         return this;
     }
 
-    public GameConfig getConfig() {
-        return config;
+    public int getMineCount() {
+        return mineCount;
     }
 
     @Override
@@ -68,12 +68,12 @@ public class Game {
                 Objects.equals(id, game.id) &&
                 Objects.equals(board, game.board) &&
                 status == game.status &&
-                Objects.equals(config, game.config);
+                mineCount == game.mineCount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, board, status, startTime, endTime, config);
+        return Objects.hash(id, board, status, startTime, endTime, mineCount);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class Game {
                 .add("status", status)
                 .add("startTime", startTime)
                 .add("endTime", endTime)
-                .add("config", config)
+                .add("mineCount", mineCount)
                 .toString();
     }
 }

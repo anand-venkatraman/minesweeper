@@ -94,8 +94,8 @@ public class MineSweeperGameServiceImplTest {
     }
 
     private Game game(int rows, int columns, int mineCount) {
-        Board board = new Board().setTotalMines(8).setBoxes(boxes(rows, columns));
-        return new Game(randomAlphanumeric(10), board, new GameConfig(columns, rows, mineCount));
+        Board board = new Board().setTotalMines(mineCount).setBoxes(boxes(rows, columns));
+        return new Game(randomAlphanumeric(10), board, mineCount);
     }
 
     private Box[][] boxes(int rows, int columns) {
